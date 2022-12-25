@@ -22,8 +22,8 @@ public:
 	Plenty operator+(const Plenty& second);
 	Plenty operator-(const Plenty& second);
 
-	Plenty& operator+(int num);
-	Plenty& operator-(int num);
+	Plenty operator+(int num);
+	Plenty operator-(int num);
 
 	Plenty& operator+=(int num);
 	Plenty& operator-=(int num);
@@ -32,6 +32,7 @@ public:
 	Plenty ungeneral(const Plenty& second);
 
 	bool check_num(int num);
+	bool operator!=(const Plenty& second);
 
 	bool operator==(const Plenty& second);
 
@@ -92,40 +93,47 @@ Plenty Plenty:: operator-(const Plenty& second){
 	}
 	return tmp;
 }
-Plenty& Plenty:: operator+(int num){
+Plenty Plenty:: operator+(int num){
 	if (!data)
 	{
 		Plenty tmp(size);
 		tmp.data[0] = num;
-		data = tmp.data;
-		size++;
+		tmp.size++;
+		return tmp;
 	}
-	if (check_num(num) == false)
-	{
-		Plenty tmp(size);
-		for (int i = 0; i < size; i++) {
-			tmp.data[i] = data[i];
-		}
-		tmp.data[tmp.size] = num;
-		data = tmp.data;
-		size++;
-	}
-	return *this;
-}
-Plenty& Plenty:: operator-(int num){
-	if (check_num(num) == false)
-		throw std::logic_error("Set have not got this num");
-	for (int i = 0; i < size; i++) {
-		if (data[i] == num)
+	else {
+		if (check_num(num) == false)
 		{
-			for (int j = i; j < size - 1; j++) {
-				data[j] = data[j + 1];
+			Plenty tmp(size);
+			for (int i = 0; i < tmp.size; i++) {
+				tmp.data[i] = data[i];
 			}
-			size--;
-			break;
+			tmp.data[tmp.size] = num;
+			tmp.size++;
+			return tmp;
 		}
 	}
-	return *this;
+}
+Plenty Plenty:: operator-(int num)
+{
+	Plenty data_n(size);
+	for (int i = 0; i < data_n.size; i++) {
+		data_n.data[i] = data[i];
+	}
+	if (check_num(num) == true) {
+		for (int i = 0; i < data_n.size; i++) {
+			if (data_n.data[i] == num)
+			{
+				for (int j = i; j < data_n.size - 1; j++) {
+					data_n.data[j] = data_n.data[j + 1];
+				}
+				data_n.size--;
+				break;
+			}
+		}
+	}
+	else std::cout << "Set have not got this num" << std::endl;
+	return data_n;
 }
 
 Plenty& Plenty::operator+=(int num)
@@ -207,12 +215,35 @@ bool Plenty:: operator==(const Plenty& second){
 			for (int j = 0; j < second.size; j++) {
 				if (data[i] == second.data[j]) {
 					flag = true;
+					break;
 				}
 			}
 			if (flag == false)
 				return false;
 		}
 		return true;
+	}
+}
+
+bool Plenty:: operator!=(const Plenty& second) {
+	if (second.size != size)
+		return true;
+	else
+	{
+		bool flag = true;
+		for (int i = 0; i < size; i++)
+		{
+			flag = true;
+			for (int j = 0; j < second.size; j++) {
+				if (data[i] == second.data[j]) {
+					flag = false;
+					break;
+				}
+			}
+			if (flag == true)
+				return true;
+		}
+		return false;
 	}
 }
 std::ostream& operator<<(std::ostream& s, const Plenty& plenty){
@@ -231,6 +262,8 @@ void menu() {
 	cout << "6.Intersection" << endl;
 	cout << "7.Find num in plenty" << endl;
 	cout << "8.Ungeneral" << endl;
+	cout << "9.Compare" << endl;
+	cout << "0.Add in plenty plenty with num" << endl;
 }
 void menu_2() {
 	cout << "1.plenty" << endl;
@@ -240,219 +273,271 @@ void menu_3() {
 	cout << "1.p1-p2" << endl;
 	cout << "2.p2-p1" << endl;
 }
+void menu_4(){
+	cout << "1.p1 with i" << endl;
+	cout << "2.p2 with i" << endl;
+}
 
 int main() {
-	Plenty p1;
-	Plenty p2;
-	Plenty p3;
+	try {
+		Plenty p1;
+		Plenty p2;
+		Plenty p3;
 
-	while (true)
+		while (true)
+		{
+			system("cls");
+			menu();
+			size_t flag;
+			cin >> flag;
+			switch (flag)
+			{
+			case 1:
+			{
+				bool fg = true;
+				while (fg) {
+					system("cls");
+					menu_2();
+					size_t flag_2;
+					cin >> flag_2;
+					switch (flag_2)
+					{
+					case 1:
+					{
+						int i;
+						cout << "i=";
+						cin >> i;
+						p1 += i;
+						cout << "p1= " << p1 << endl;
+						system("pause");
+						fg = false;
+						break;
+					}
+					case 2:
+					{
+						int i;
+						cout << "i=";
+						cin >> i;
+						p2 += i;
+						cout << "p2= " << p2 << endl;
+						system("pause");
+						fg = false;
+						break;
+					}
+					}
+				} break;
+			}
+			case 2:
+			{
+				bool fg2 = true;
+				while (fg2) {
+					system("cls");
+					menu_2();
+					size_t flag_2;
+					cin >> flag_2;
+					switch (flag_2)
+					{
+					case 1:
+					{
+						int i;
+						cout << "i=";
+						cin >> i;
+						p1 -= i;
+						cout << "p1= " << p1 << endl;
+						system("pause");
+						fg2 = false;
+						break;
+					}
+					case 2:
+					{
+						int i;
+						cout << "i=";
+						cin >> i;
+						p2 - i;
+						cout << "p2= " << p2 << endl;
+						system("pause");
+						fg2 = false;
+						break;
+					}
+					}
+
+				} break;
+			}
+			case 3:
+			{
+				cout << "p3= " << p1 + p2 << endl;
+				system("pause");
+				break;
+			}
+			case 4:
+			{
+				bool fg3 = true;
+				while (fg3) {
+					system("cls");
+					menu_3();
+					size_t flag_2;
+					cin >> flag_2;
+					switch (flag_2)
+					{
+					case 1:
+					{
+						cout << "p3= " << p1 - p2 << endl;
+						system("pause");
+						fg3 = false;
+						break;
+					}
+					case 2:
+					{
+						cout << "p3= " << p2 - p1 << endl;
+						system("pause");
+						fg3 = false;
+						break;
+					}
+					}
+
+				} break;
+			}
+			case 5:
+			{
+				bool fg4 = true;
+				while (fg4) {
+					system("cls");
+					menu_2();
+					size_t flag_2;
+					cin >> flag_2;
+					switch (flag_2)
+					{
+					case 1:
+					{
+						int i;
+						cout << "i=";
+						cin >> i;
+						cout << "p1[i]= " << p1[i] << endl;
+						system("pause");
+						fg4 = false;
+						break;
+					}
+					case 2:
+					{
+						int i;
+						cout << "i=";
+						cin >> i;
+						cout << "p2= " << p2[i] << endl;
+						system("pause");
+						fg4 = false;
+						break;
+					}
+					}
+
+				} break;
+			}
+			case 6:
+			{
+				cout << "intersection : " << p1.intersection(p2) << endl;
+				system("pause");
+				break;
+			}
+			case 7:
+			{
+				bool fg7 = true;
+				while (fg7) {
+					system("cls");
+					menu_2();
+					size_t flag_2;
+					cin >> flag_2;
+					switch (flag_2)
+					{
+					case 1:
+					{
+						int i;
+						cout << "i=";
+						cin >> i;
+						bool p = p1.check_num(i);
+						if (p == true) {
+							cout << "plenty has num" << endl;
+						}
+						else {
+							cout << "plenty has not num" << endl;
+						}
+						system("pause");
+						fg7 = false;
+						break;
+					}
+					case 2:
+					{
+						int i;
+						cout << "i=";
+						cin >> i;
+						bool p = p2.check_num(i);
+						if (p == true) {
+							cout << "plenty has num" << endl;
+						}
+						else {
+							cout << "plenty has not num" << endl;
+						}
+						system("pause");
+						fg7 = false;
+						break;
+					}
+					}
+
+				} break;
+			}
+			case 8:
+			{
+				cout << "ungeneral: " << (p1 - p2) + (p2 - p1) << endl;
+				system("pause");
+				break;
+			}
+			case 9:
+			{
+				bool p = p1 != p2;
+				cout << "Result : " << p << endl;
+				system("pause");
+				break;
+			}
+			case 0:
+			{
+				bool fg8 = true;
+				while (fg8) {
+					system("cls");
+					menu_4();
+					size_t flag_2;
+					cin >> flag_2;
+					switch (flag_2)
+					{
+					case 1:
+					{
+						int i;
+						cout << "i=";
+						cin >> i;
+						p3 = p1 + i;
+						cout << "p3 :" << p3 << endl;
+						system("pause");
+						fg8 = false;
+						break;
+					}
+					case 2:
+					{
+						int i;
+						cout << "i=";
+						cin >> i;
+						p3 = p2 + i;
+						cout << "p3 :" << p3 << endl;
+						system("pause");
+						fg8 = false;
+						break;
+					}
+					}
+				}
+
+			}
+			}
+		}
+	}
+	catch (std::exception& ex)
 	{
-		system("cls");
-		menu();
-		size_t flag;
-		cin >> flag;
-		switch (flag)
-		{
-		case 1:
-		{
-			bool fg = true;
-			while (fg) {
-				system("cls");
-				menu_2();
-				size_t flag_2;
-				cin >> flag_2;
-				switch (flag_2)
-				{
-				case 1:
-				{
-					int i;
-					cout << "i=";
-					cin >> i;
-					p1 += i;
-					cout << "p1= " << p1 << endl;
-					system("pause");
-					fg = false;
-					break;
-				}
-				case 2:
-				{
-					int i;
-					cout << "i=";
-					cin >> i;
-					p2 + i;
-					cout << "p2= " << p2 << endl;
-					system("pause");
-					fg = false;
-					break;
-				}
-				}
-			} break;
-		}
-		case 2:
-		{
-			bool fg2 = true;
-			while (fg2) {
-				system("cls");
-				menu_2();
-				size_t flag_2;
-				cin >> flag_2;
-				switch (flag_2)
-				{
-				case 1:
-				{
-					int i;
-					cout << "i=";
-					cin >> i;
-					p1 -= i;
-					cout << "p1= " << p1 << endl;
-					system("pause");
-					fg2 = false;
-					break;
-				}
-				case 2:
-				{
-					int i;
-					cout << "i=";
-					cin >> i;
-					p2 - i;
-					cout << "p2= " << p2 << endl;
-					system("pause");
-					fg2 = false;
-					break;
-				}
-				}
-
-			} break;
-		}
-		case 3:
-		{
-			cout << "p3= " << p1 + p2 << endl;
-			system("pause");
-			break;
-		}
-		case 4:
-		{
-			bool fg3 = true;
-			while (fg3) {
-				system("cls");
-				menu_3();
-				size_t flag_2;
-				cin >> flag_2;
-				switch (flag_2)
-				{
-				case 1:
-				{
-					cout << "p3= " << p1 - p2 << endl;
-					system("pause");
-					fg3 = false;
-					break;
-				}
-				case 2:
-				{
-					cout << "p3= " << p2 - p1 << endl;
-					system("pause");
-					fg3 = false;
-					break;
-				}
-				}
-
-			} break;
-		}
-		case 5:
-		{
-			bool fg4 = true;
-			while (fg4) {
-				system("cls");
-				menu_2();
-				size_t flag_2;
-				cin >> flag_2;
-				switch (flag_2)
-				{
-				case 1:
-				{
-					int i;
-					cout << "i=";
-					cin >> i;
-					cout << "p1[i]= " << p1[i] << endl;
-					system("pause");
-					fg4 = false;
-					break;
-				}
-				case 2:
-				{
-					int i;
-					cout << "i=";
-					cin >> i;
-					cout << "p2= " << p2[i] << endl;
-					system("pause");
-					fg4 = false;
-					break;
-				}
-				}
-
-			} break;
-		}
-		case 6:
-		{
-			cout << "intersection : " << p1.intersection(p2) << endl;
-			system("pause");
-			break;
-		}
-		case 7:
-		{
-			bool fg7 = true;
-			while (fg7) {
-				system("cls");
-				menu_2();
-				size_t flag_2;
-				cin >> flag_2;
-				switch (flag_2)
-				{
-				case 1:
-				{
-					int i;
-					cout << "i=";
-					cin >> i;
-					bool p = p1.check_num(i);
-					if (p == true) {
-						cout << "plenty has num" << endl;
-					}
-					else {
-						cout << "plenty has not num" << endl;
-					}
-					system("pause");
-					fg7 = false;
-					break;
-				}
-				case 2:
-				{
-					int i;
-					cout << "i=";
-					cin >> i;
-					bool p = p2.check_num(i);
-					if (p == true) {
-						cout << "plenty has num" << endl;
-					}
-					else {
-						cout << "plenty has not num" << endl;
-					}
-					system("pause");
-					fg7 = false;
-					break;
-				}
-				}
-
-			} break;
-		}
-		case 8:
-		{
-			cout << "ungeneral: " << (p1 - p2) + (p2 - p1) << endl;
-			system("pause");
-			break;
-		}
-
-		}
+		std::cout << ex.what() << std::endl;
 	}
 }
 	
